@@ -1,21 +1,24 @@
 const { request, response } = require("express");
 const usersDDBB = require("../helpers/users");
 
-const allUsers = (req = request, res = response) => {
+const getUsers = (req = request, res = response) => {
 	//url querys
 	const { userID } = req.query;
 
 	//Obtiene las transacciones de un usuario
 	if (userID) {
-		return res.json({ userID });
+		const user = usersDDBB.filter(
+			(user) => user.userID === parseInt(userID)
+		);
+		if (!user[0]) {
+			return res
+				.status(400)
+				.json({ msg: "No existe usuario con ID: " + userID });
+		}
+		return res.json(user[0]);
 	}
 
 	res.json(usersDDBB);
 };
 
-const getUser = (req = request, res = response) => {
-	const { id } = req.query;
-	console.log("Usuario" + id);
-};
-
-module.exports = { allUsers, getUser };
+module.exports = { getUsers };
