@@ -23,11 +23,6 @@ class Server {
 
 	routes() {
 		this.app.use(this._transactionsPath, require("../routes/transactions"));
-		this.app.post(this._transactionsPath, (req, res) => {
-			let body = req.body;
-			console.log(body);
-			res.json(body);
-		});
 	}
 
 	run() {

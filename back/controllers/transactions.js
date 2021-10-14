@@ -7,26 +7,49 @@ const data = require("../helpers/transactions");
 
 //Get all transactions if you dont send the query id. If you send the query "id" you will get the info of that transaction
 const getTransactions = (req = request, res = response) => {
-	const { id } = req.query;
-	if (id) {
-		return res.json({ id });
+	//url querys
+	const { transactionID, accountID } = req.query;
+
+	//todo: comprobar que el id existe antes de comprobar
+
+	//comprueba que solo se envie un parámetro.
+	if (transactionID && accountID)
+		return res
+			.status(400)
+			.json({ error: "Demasiados parametros para la consulta" });
+
+	//Obtiene una unica transacción **Ver si podemos mejorar esto en el front
+	if (transactionID) {
+		return res.json({ transactionID });
 	}
+
+	//Obtiene las transacciones de un usuario
+	if (accountID) {
+		return res.json({ accountID });
+	}
+
+	//Obtiene todas las transacciones de todos los usuarios.
 	res.json(data);
 };
 
 const newTransaction = (req = request, res = response) => {
-	let body = req.body;
-	console.log(body);
+	let { sender, receiver, ammount } = req.body;
 
-	res.send("as");
+	//todo: sanitizar datos
 
-	/* res.json({
-		_transactionID: uuidv4(),
-		from: sender,
-		to: receiver,
+	//todo: comprobar que el sender tenga el dinero.
+
+	//todo: comprobar que el receiver exista.
+
+	//todo: procesar transacción.
+
+	res.json({
+		transactionID: uuidv4(),
+		sender,
+		receiver,
+		date: new Date().toISOString(),
 		ammount,
-		date: new Date().toUTCString(),
-	}); */
+	});
 };
 
 module.exports = {
