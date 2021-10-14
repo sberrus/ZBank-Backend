@@ -2,8 +2,8 @@ const { Schema, model } = require("mongoose");
 
 const NewUserSchema = Schema({
 	userID: {
-		type: Boolean,
-		default: true,
+		type: String,
+		unique: true,
 	},
 	userName: {
 		type: String,
@@ -12,6 +12,10 @@ const NewUserSchema = Schema({
 	password: {
 		type: String,
 		required: [true, "La contraseña es obligatoria"],
+	},
+	role: {
+		type: String,
+		default: "USER"
 	},
 	balance: {
 		type: Number,
