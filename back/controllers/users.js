@@ -28,7 +28,7 @@ const newUser = async (req = request, res = response) => {
 	const { userName, password } = req.body;
 
 	const userID = uuidv4().split("-")[2];
-	
+
 	const balance = 2500;
 
 	const newUsuario = new newUserSchema({

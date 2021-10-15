@@ -1,6 +1,8 @@
 //imports
 const { request, response } = require("express");
 const { v4: uuidv4 } = require("uuid");
+const newTransactionSchema = require("../ddbb/schemas/newTransactionSchema");
+const newUserSchema = require("../ddbb/schemas/newUserSchema");
 
 //helpers
 const data = require("../helpers/transactions");
@@ -37,19 +39,21 @@ const newTransaction = (req = request, res = response) => {
 
 	//todo: sanitizar datos
 
-	//todo: comprobar que el sender tenga el dinero.
+	//todo: comprobar que el sender exista y tenga el dinero.
 
 	//todo: comprobar que el receiver exista.
 
 	//todo: procesar transacción.
-
-	res.json({
-		transactionID: uuidv4(),
+	const transaction = new newTransactionSchema({
+		transactionID: uuidv4().split("-")[4],
 		sender,
 		receiver,
 		date: new Date().toISOString(),
 		ammount,
 	});
+	transaction.save();
+
+	res.json(transaction);
 };
 
 module.exports = {
