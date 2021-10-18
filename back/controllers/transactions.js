@@ -1,18 +1,13 @@
 //imports
 const { request, response } = require("express");
 const { v4: uuidv4 } = require("uuid");
-const newTransactionSchema = require("../ddbb/schemas/newTransactionSchema");
-const newUserSchema = require("../ddbb/schemas/newUserSchema");
-
-//helpers
-const data = require("../helpers/transactions");
+const TransactionSchema = require("../ddbb/schemas/transactionSchema");
+const UserSchema = require("../ddbb/schemas/userSchema");
 
 //Get all transactions if you dont send the query id. If you send the query "id" you will get the info of that transaction
-const getTransactions = (req = request, res = response) => {
+const getTransactions = async (req = request, res = response) => {
 	//url querys
 	const { transactionID, accountID } = req.query;
-
-	//todo: comprobar que el id existe antes de comprobar
 
 	//comprueba que solo se envie un parámetro.
 	if (transactionID && accountID)
@@ -20,31 +15,71 @@ const getTransactions = (req = request, res = response) => {
 			.status(400)
 			.json({ error: "Demasiados parametros para la consulta" });
 
-	//Obtiene una unica transacción **Ver si podemos mejorar esto en el front
-	if (transactionID) {
-		return res.json({ transactionID });
-	}
+	try {
+		const DBtransactions = await TransactionSchema.find();
 
-	//Obtiene las transacciones de un usuario
-	if (accountID) {
-		return res.json({ accountID });
-	}
+		//Obtiene una unica transacción
+		//todo: Ver si podemos mejorar esto en el front
+		if (transactionID) {
+			const uniquetransaction = DBtransactions.filter(
+				(transaction) => transaction.transactionID === transactionID
+			);
+			return res.json(uniquetransaction[0]);
+		}
 
-	//Obtiene todas las transacciones de todos los usuarios.
-	res.json(data);
+		//Obtiene las transacciones de un usuario
+		if (accountID) {
+			const userTransactions = DBtransactions.filter(
+				(transaction) =>
+					transaction.sender === accountID ||
+					transaction.receiver === accountID
+			);
+			return res.json(userTransactions);
+		}
+		//Obtiene todas las transacciones de todos los usuarios.
+		res.json(DBtransactions);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
-const newTransaction = (req = request, res = response) => {
+const newTransaction = async (req = request, res = response) => {
 	let { sender, receiver, ammount } = req.body;
 
-	//todo: sanitizar datos
+	//validar que el receiver exista.
+	try {
+		const userReceiver = await UserSchema.findOne({ userID: receiver });
+		if (!userReceiver) {
+			return res
+				.status(400)
+				.json({ error: "ID receiver incorrecto o inexistente" });
+		}
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ msg: "Error en el servidor", error });
+	}
 
-	//todo: comprobar que el sender exista y tenga el dinero.
+	//validar type de ammount
+	if (typeof ammount !== "number") {
+		return res.status(400).json({ error: "El monto debe ser un INT" });
+	}
 
-	//todo: comprobar que el receiver exista.
+	//validar que el sender exista
+	try {
+		const userSender = await UserSchema.findOne({ userID: sender });
+		if (!userSender) {
+			return res.status(400).json({ error: "ID Sender Incorrecto" });
+		}
+		//validar que el sender tenga dinero
+		if (userSender.balance < ammount) {
+			return res.status(400).json({ error: "Estas pelando bolas" });
+		}
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ msg: "Error en el servidor", error });
+	}
 
-	//todo: procesar transacción.
-	const transaction = new newTransactionSchema({
+	const transaction = new TransactionSchema({
 		transactionID: uuidv4().split("-")[4],
 		sender,
 		receiver,

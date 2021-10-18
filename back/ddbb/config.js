@@ -10,7 +10,6 @@ const connectDDBB = async () => {
 		console.log("BBDD Online");
 	} catch (error) {
 		console.log(error);
-		throw new Error("Error al conectar la ddbb");
 	}
 };
 

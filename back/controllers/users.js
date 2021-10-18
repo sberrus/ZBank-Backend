@@ -1,6 +1,6 @@
 const { request, response } = require("express");
 const { v4: uuidv4 } = require("uuid");
-const newUserSchema = require("../ddbb/schemas/newUserSchema");
+const newUserSchema = require("../ddbb/schemas/userSchema");
 
 const usersDDBB = require("../helpers/users");
 
