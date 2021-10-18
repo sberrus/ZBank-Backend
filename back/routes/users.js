@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/", getUsers);
 router.post("/", newUser);
+
 //testing
 router.get("/pruebas", async (req, res) => {
 	const user = await UserModel.findOne({ userID: "40cb" });
