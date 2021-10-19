@@ -1,10 +1,15 @@
+//imports
 const { Router } = require("express");
 const { body } = require("express-validator");
+
+//controllers
 const {
 	getTransactions,
 	newTransaction,
 } = require("../controllers/transactions");
 const { errorHandler } = require("../middlewares/EVErrorHandler");
+
+//
 const router = Router();
 
 //Obtiene todas las transacciones y obtiene una unica transacción si enviamos el id de la misma.
