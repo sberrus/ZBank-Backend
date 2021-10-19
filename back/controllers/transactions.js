@@ -1,12 +1,12 @@
 //imports
 const { request, response } = require("express");
+const { validationResult } = require("express-validator");
 const { v4: uuidv4 } = require("uuid");
 const TransactionSchema = require("../ddbb/schemas/transactionSchema");
 const UserSchema = require("../ddbb/schemas/userSchema");
 
-//Get all transactions if you dont send the query id. If you send the query "id" you will get the info of that transaction
+//obtiene todas las transacciones. Unica transacción o las transacciones de un usuario.
 const getTransactions = async (req = request, res = response) => {
-	//url querys
 	const { transactionID, accountID } = req.query;
 
 	//comprueba que solo se envie un parámetro.
@@ -17,7 +17,6 @@ const getTransactions = async (req = request, res = response) => {
 
 	try {
 		const DBtransactions = await TransactionSchema.find();
-
 		//Obtiene una unica transacción
 		//todo: Ver si podemos mejorar esto en el front
 		if (transactionID) {
@@ -48,8 +47,8 @@ const newTransaction = async (req = request, res = response) => {
 
 	//validar que el receiver exista.
 	try {
-		const userReceiver = await UserSchema.findOne({ userID: receiver });
-		if (!userReceiver) {
+		const receiverData = await UserSchema.findOne({ userID: receiver });
+		if (!receiverData) {
 			return res
 				.status(400)
 				.json({ error: "ID receiver incorrecto o inexistente" });
@@ -66,12 +65,12 @@ const newTransaction = async (req = request, res = response) => {
 
 	//validar que el sender exista
 	try {
-		const userSender = await UserSchema.findOne({ userID: sender });
-		if (!userSender) {
+		const senderData = await UserSchema.findOne({ userID: sender });
+		if (!senderData) {
 			return res.status(400).json({ error: "ID Sender Incorrecto" });
 		}
 		//validar que el sender tenga dinero
-		if (userSender.balance < ammount) {
+		if (senderData.balance < ammount) {
 			return res.status(400).json({ error: "Estas pelando bolas" });
 		}
 	} catch (error) {
@@ -79,6 +78,9 @@ const newTransaction = async (req = request, res = response) => {
 		return res.status(500).json({ msg: "Error en el servidor", error });
 	}
 
+	//todo: actualizar balance del usuario
+
+	//registrar en la BBDD la transacción
 	const transaction = new TransactionSchema({
 		transactionID: uuidv4().split("-")[4],
 		sender,
