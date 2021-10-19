@@ -9,7 +9,6 @@ const {
 } = require("../controllers/transactions");
 const { errorHandler } = require("../middlewares/EVErrorHandler");
 
-//
 const router = Router();
 
 //Obtiene todas las transacciones y obtiene una unica transacción si enviamos el id de la misma.
@@ -18,7 +17,6 @@ router.get("/", getTransactions);
 //Crea una nueva transacción.
 router.post(
 	"/",
-	//todo: modular los handlers
 	[
 		body("sender")
 			.notEmpty()

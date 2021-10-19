@@ -44,10 +44,11 @@ const getTransactions = async (req = request, res = response) => {
 
 const newTransaction = async (req = request, res = response) => {
 	let { sender, receiver, ammount } = req.body;
+	let senderData, receiverData;
 
 	//validar que el receiver exista.
 	try {
-		const receiverData = await UserSchema.findOne({ userID: receiver });
+		receiverData = await UserSchema.findOne({ userID: receiver });
 		if (!receiverData) {
 			return res
 				.status(400)
@@ -65,7 +66,7 @@ const newTransaction = async (req = request, res = response) => {
 
 	//validar que el sender exista
 	try {
-		const senderData = await UserSchema.findOne({ userID: sender });
+		senderData = await UserSchema.findOne({ userID: sender });
 		if (!senderData) {
 			return res.status(400).json({ error: "ID Sender Incorrecto" });
 		}
@@ -78,7 +79,26 @@ const newTransaction = async (req = request, res = response) => {
 		return res.status(500).json({ msg: "Error en el servidor", error });
 	}
 
-	//todo: actualizar balance del usuario
+	//todo: actualizar balance del sender
+	const senderID = senderData.userID;
+	const senderNewBalance = senderData.balance - ammount;
+
+	await UserSchema.findOneAndUpdate(
+		{ userID: senderID },
+		{
+			balance: senderNewBalance,
+		}
+	);
+	const receiverID = receiverData.userID;
+	const receiverNewBalance = receiverData.balance + ammount;
+	console.log(receiverData.balance, receiverNewBalance);
+
+	await UserSchema.findOneAndUpdate(
+		{ userID: receiverID },
+		{
+			balance: receiverNewBalance,
+		}
+	);
 
 	//registrar en la BBDD la transacción
 	const transaction = new TransactionSchema({
