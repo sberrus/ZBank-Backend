@@ -9,20 +9,20 @@ const User = require("../ddbb/schemas/User");
 //Controllers
 const getTransactions = async (req = request, res = response) => {
 	const { transactionID, accountID } = req.query;
+	let transactions, totalDocs;
 
 	try {
-		const DBtransactions = await Transaction.find();
+		totalDocs = await Transaction.countDocuments();
 		//Obtiene una unica transacción
 		if (transactionID) {
-			const uniquetransaction = DBtransactions.filter(
-				(transaction) => transaction.transactionID === transactionID
-			);
-			return res.json(uniquetransaction[0]);
+			const transaction = await Transaction.findById(transactionID);
+			return res.json(transaction);
 		}
 
+		transactions = await Transaction.find();
 		//Obtiene las transacciones de un usuario
 		if (accountID) {
-			const userTransactions = DBtransactions.filter(
+			const userTransactions = transactions.filter(
 				(transaction) =>
 					transaction.sender === accountID ||
 					transaction.receiver === accountID
@@ -30,7 +30,7 @@ const getTransactions = async (req = request, res = response) => {
 			return res.json(userTransactions);
 		}
 		//Obtiene todas las transacciones de todos los usuarios.
-		res.json(DBtransactions);
+		res.json({ totalDocs, transactions });
 	} catch (error) {
 		console.log(error);
 	}
@@ -41,15 +41,11 @@ const newTransaction = async (req = request, res = response) => {
 	let senderData, receiverData;
 
 	try {
+		//getting SENDER and RECEIVER from DDBB
 		receiverData = await User.findOne({ userID: receiver });
-	} catch (error) {
-		console.log(error);
-		return res.status(500).json({ msg: "Error en el servidor", error });
-	}
-
-	try {
 		senderData = await User.findOne({ userID: sender });
-		//check if sender has money
+
+		//check if SENDER has money
 		if (senderData.balance < ammount) {
 			return res.status(400).json({ error: "Estas pelando bolas" });
 		}
@@ -69,7 +65,6 @@ const newTransaction = async (req = request, res = response) => {
 	);
 	const receiverID = receiverData.userID;
 	const receiverNewBalance = receiverData.balance + ammount;
-	console.log(receiverData.balance, receiverNewBalance);
 
 	await User.findOneAndUpdate(
 		{ userID: receiverID },
