@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const TransactionSchema = Schema({
+const Transaction = Schema({
 	transactionID: {
 		type: String,
 		unique: true,
@@ -23,4 +23,4 @@ const TransactionSchema = Schema({
 	},
 });
 
-module.exports = model("transactions", TransactionSchema);
+module.exports = model("transactions", Transaction);

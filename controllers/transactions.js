@@ -1,24 +1,18 @@
-//imports
+//Imports
 const { request, response } = require("express");
-const { validationResult } = require("express-validator");
+//Helpers
 const { v4: uuidv4 } = require("uuid");
-const TransactionSchema = require("../ddbb/schemas/transactionSchema");
-const UserSchema = require("../ddbb/schemas/userSchema");
+//Schemas
+const Transaction = require("../ddbb/schemas/Transaction");
+const User = require("../ddbb/schemas/User");
 
-//obtiene todas las transacciones. Unica transacción o las transacciones de un usuario.
+//Controllers
 const getTransactions = async (req = request, res = response) => {
 	const { transactionID, accountID } = req.query;
 
-	//comprueba que solo se envie un parámetro.
-	if (transactionID && accountID)
-		return res
-			.status(400)
-			.json({ error: "Demasiados parametros para la consulta" });
-
 	try {
-		const DBtransactions = await TransactionSchema.find();
+		const DBtransactions = await Transaction.find();
 		//Obtiene una unica transacción
-		//todo: Ver si podemos mejorar esto en el front
 		if (transactionID) {
 			const uniquetransaction = DBtransactions.filter(
 				(transaction) => transaction.transactionID === transactionID
@@ -46,31 +40,16 @@ const newTransaction = async (req = request, res = response) => {
 	let { sender, receiver, ammount } = req.body;
 	let senderData, receiverData;
 
-	//validar que el receiver exista.
 	try {
-		receiverData = await UserSchema.findOne({ userID: receiver });
-		if (!receiverData) {
-			return res
-				.status(400)
-				.json({ error: "ID receiver incorrecto o inexistente" });
-		}
+		receiverData = await User.findOne({ userID: receiver });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({ msg: "Error en el servidor", error });
 	}
 
-	//validar type de ammount
-	if (typeof ammount !== "number") {
-		return res.status(400).json({ error: "El monto debe ser un INT" });
-	}
-
-	//validar que el sender exista
 	try {
-		senderData = await UserSchema.findOne({ userID: sender });
-		if (!senderData) {
-			return res.status(400).json({ error: "ID Sender Incorrecto" });
-		}
-		//validar que el sender tenga dinero
+		senderData = await User.findOne({ userID: sender });
+		//check if sender has money
 		if (senderData.balance < ammount) {
 			return res.status(400).json({ error: "Estas pelando bolas" });
 		}
@@ -79,11 +58,10 @@ const newTransaction = async (req = request, res = response) => {
 		return res.status(500).json({ msg: "Error en el servidor", error });
 	}
 
-	//todo: actualizar balance del sender
 	const senderID = senderData.userID;
 	const senderNewBalance = senderData.balance - ammount;
 
-	await UserSchema.findOneAndUpdate(
+	await User.findOneAndUpdate(
 		{ userID: senderID },
 		{
 			balance: senderNewBalance,
@@ -93,15 +71,15 @@ const newTransaction = async (req = request, res = response) => {
 	const receiverNewBalance = receiverData.balance + ammount;
 	console.log(receiverData.balance, receiverNewBalance);
 
-	await UserSchema.findOneAndUpdate(
+	await User.findOneAndUpdate(
 		{ userID: receiverID },
 		{
 			balance: receiverNewBalance,
 		}
 	);
 
-	//registrar en la BBDD la transacción
-	const transaction = new TransactionSchema({
+	//Registrar nueva transacción
+	const transaction = new Transaction({
 		transactionID: uuidv4().split("-")[4],
 		sender,
 		receiver,

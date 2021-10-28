@@ -4,7 +4,7 @@ const { body } = require("express-validator");
 
 //controllers
 const { getUsers, newUser } = require("../controllers/users");
-const UserModel = require("../ddbb/schemas/userSchema");
+const User = require("../ddbb/schemas/User");
 
 //helpers
 const { errorHandler } = require("../middlewares/EVErrorHandler");
@@ -31,7 +31,7 @@ router.post(
 router.get("/pruebas", async (req, res) => {
 	const { userID, balance } = req.body;
 	try {
-		await UserModel.findOneAndUpdate(userID, { balance });
+		await User.findOneAndUpdate(userID, { balance });
 
 		res.status(200).json({ done: "true" });
 	} catch (error) {

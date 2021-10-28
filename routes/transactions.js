@@ -1,20 +1,22 @@
 //imports
 const { Router } = require("express");
 const { body } = require("express-validator");
-
 //controllers
 const {
 	getTransactions,
 	newTransaction,
 } = require("../controllers/transactions");
+//middlewares
 const { errorHandler } = require("../middlewares/EVErrorHandler");
+const { singleQuery } = require("../middlewares/checkers");
+//validators
+const { userExists } = require("../helpers/db-validators");
 
+//Rutas
 const router = Router();
 
-//Obtiene todas las transacciones y obtiene una unica transacción si enviamos el id de la misma.
-router.get("/", getTransactions);
+router.get("/", singleQuery, getTransactions);
 
-//Crea una nueva transacción.
 router.post(
 	"/",
 	[
@@ -22,13 +24,20 @@ router.post(
 			.notEmpty()
 			.withMessage("El ID sender es obligatorio")
 			.isLength({ min: 4, max: 4 })
-			.withMessage("El ID consta de 4 caractéres"),
+			.withMessage("El ID consta de 4 caractéres")
+			.bail()
+			.custom(userExists),
 		body("receiver")
 			.notEmpty()
 			.withMessage("El ID receiver es obligatorio")
 			.isLength({ min: 4, max: 4 })
-			.withMessage("El ID consta de 4 caractéres"),
-		body("ammount").notEmpty().withMessage("El monto es obligatorio"),
+			.withMessage("El ID consta de 4 caractéres")
+			.bail()
+			.custom(userExists),
+		body("ammount")
+			.isNumeric()
+			.notEmpty()
+			.withMessage("El monto es obligatorio"),
 	],
 	errorHandler,
 	newTransaction

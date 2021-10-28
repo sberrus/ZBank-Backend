@@ -1,6 +1,6 @@
 const { request, response } = require("express");
 const { v4: uuidv4 } = require("uuid");
-const newUserSchema = require("../ddbb/schemas/userSchema");
+const User = require("../ddbb/schemas/User.js");
 
 const getUsers = async (req = request, res = response) => {
 	//url querys
@@ -8,7 +8,7 @@ const getUsers = async (req = request, res = response) => {
 
 	//Obtiene las transacciones de un usuario
 	try {
-		const users = await newUserSchema.find();
+		const users = await User.find();
 		if (userID) {
 			const uniqueUser = users.filter((user) => user.userID === userID);
 			//en caso de que no encuentre usuario
@@ -30,7 +30,7 @@ const newUser = async (req = request, res = response) => {
 	const userID = uuidv4().split("-")[2];
 	const balance = 2500;
 
-	const newUsuario = new newUserSchema({
+	const newUsuario = new User({
 		userID,
 		userName,
 		password,
