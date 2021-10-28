@@ -11,18 +11,17 @@ const login = async (req = request, res = response) => {
 	try {
 		//Vaidaciones
 		//existe correo
-		const usuario = await User.findOne({ nombre: username });
-		console.log(usuario);
+		const usuario = await User.findOne({ username });
 		if (!usuario) {
 			return res
 				.status(400)
-				.json({ msg: "Error al iniciar sesión - Correo" });
+				.json({ msg: "Error al iniciar sesión - username" });
 		}
 		//usuario activo
 		if (usuario.estado === false) {
 			return res
 				.status(400)
-				.json({ msg: "Error al iniciar sesión - Estado" });
+				.json({ msg: "Error al iniciar sesión - status" });
 		}
 		//contraseña
 		const validPassword = bcryptjs.compareSync(password, usuario.password);

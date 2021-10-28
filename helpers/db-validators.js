@@ -13,6 +13,7 @@ const userExists = async (userID) => {
 };
 const userIsActive = async (username) => {
 	const usuario = await User.findOne({ username });
+	console.log(usuario);
 	if (!usuario) {
 		throw new Error(`Error al encontrar al usuario - ID no existe en DDBB`);
 	}
