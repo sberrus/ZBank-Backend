@@ -1,12 +1,17 @@
 //imports
 const { request, response } = require("express");
+const bcryptjs = require("bcryptjs");
 //helpers
 const { v4: uuidv4 } = require("uuid");
 //Schemas
 const User = require("../ddbb/schemas/User.js");
+const { query } = require("express-validator");
 
 const getUsers = async (req = request, res = response) => {
 	const { userID } = req.query; //querys
+
+	//mongo Query
+	const _query = { status: true };
 
 	try {
 		//Get one user
@@ -15,8 +20,8 @@ const getUsers = async (req = request, res = response) => {
 			return res.json(user);
 		}
 		//Get all users
-		const users = await User.find();
-		const usersCount = await User.countDocuments();
+		const users = await User.find(_query);
+		const usersCount = await User.countDocuments(_query);
 		res.status(200).json({ usersCount, users });
 	} catch (error) {
 		console.log(error);
@@ -36,6 +41,10 @@ const newUser = async (req = request, res = response) => {
 		password,
 		balance,
 	});
+
+	//encriptar contraseña
+	const salt = bcryptjs.genSaltSync();
+	user.password = bcryptjs.hashSync(password, salt);
 
 	try {
 		await user.save();

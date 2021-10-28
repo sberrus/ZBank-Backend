@@ -33,17 +33,4 @@ router.post(
 	newUser
 );
 
-//testing
-router.get("/pruebas", async (req, res) => {
-	const { userID, balance } = req.body;
-	try {
-		await User.findOneAndUpdate(userID, { balance });
-
-		res.status(200).json({ done: "true" });
-	} catch (error) {
-		console.log(error);
-		res.status(500).json({ error: "jeje" });
-	}
-});
-
 module.exports = router;

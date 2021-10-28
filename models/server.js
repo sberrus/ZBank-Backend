@@ -8,6 +8,7 @@ class Server {
 		this._port = process.env.PORT;
 		this._transactionsPath = "/v1/transactions";
 		this._usersPath = "/v1/users";
+		this._authPath = "/v1/auth";
 
 		//connect ddbb
 		this.DDBB();
@@ -32,6 +33,7 @@ class Server {
 	routes() {
 		this.app.use(this._transactionsPath, require("../routes/transactions"));
 		this.app.use(this._usersPath, require("../routes/users"));
+		this.app.use(this._authPath, require("../routes/auth"));
 	}
 
 	run() {

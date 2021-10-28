@@ -11,6 +11,15 @@ const userExists = async (userID) => {
 		throw new Error(`Error al encontrar al usuario - ID no existe en DDBB`);
 	}
 };
+const userIsActive = async (username) => {
+	const usuario = await User.findOne({ username });
+	if (!usuario) {
+		throw new Error(`Error al encontrar al usuario - ID no existe en DDBB`);
+	}
+	if (usuario.status === false) {
+		throw new Error(`Error al encontrar al usuario - Usuario dado de baja`);
+	}
+};
 
 const transactionExists = async (transactionID) => {
 	const transaction = await Transaction.findById(transactionID);
@@ -27,4 +36,9 @@ const usernameIsUnique = async (username) => {
 	}
 };
 
-module.exports = { userExists, transactionExists, usernameIsUnique };
+module.exports = {
+	userExists,
+	transactionExists,
+	usernameIsUnique,
+	userIsActive,
+};
