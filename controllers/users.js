@@ -1,26 +1,26 @@
+//imports
 const { request, response } = require("express");
+//helpers
 const { v4: uuidv4 } = require("uuid");
+//Schemas
 const User = require("../ddbb/schemas/User.js");
 
 const getUsers = async (req = request, res = response) => {
-	//url querys
-	const { userID } = req.query;
+	const { userID } = req.query; //querys
 
-	//Obtiene las transacciones de un usuario
 	try {
-		const users = await User.find();
+		//Get one user
 		if (userID) {
-			const uniqueUser = users.filter((user) => user.userID === userID);
-			//en caso de que no encuentre usuario
-			/* if (user === null) {
-				return res.status(400).json({ error: "Usuario no existe" });
-			} */
-			return res.json(uniqueUser[0]);
+			const user = await User.findOne({ userID });
+			return res.json(user);
 		}
-		res.json(users);
+		//Get all users
+		const users = await User.find();
+		const usersCount = await User.countDocuments();
+		res.status(200).json({ usersCount, users });
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json(user);
+		return res.status(500).json({ msg: "Error en el server", error });
 	}
 };
 

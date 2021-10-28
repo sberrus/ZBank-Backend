@@ -1,18 +1,22 @@
 //imports
 const { Router } = require("express");
-const { body } = require("express-validator");
-
+const { body, query } = require("express-validator");
+//Schemas
+const User = require("../ddbb/schemas/User");
 //controllers
 const { getUsers, newUser } = require("../controllers/users");
-const User = require("../ddbb/schemas/User");
-
 //helpers
 const { errorHandler } = require("../middlewares/EVErrorHandler");
+const { userExists } = require("../helpers/db-validators");
 
 //router
 const router = Router();
 
-router.get("/", getUsers);
+router.get(
+	"/",
+	[query("userID").optional().custom(userExists), errorHandler],
+	getUsers
+);
 router.post(
 	"/",
 	[

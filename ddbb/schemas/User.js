@@ -7,6 +7,7 @@ const User = Schema({
 	},
 	userName: {
 		type: String,
+		unique: true,
 		required: [true, "Nombre Obligatorio"],
 	},
 	password: {
@@ -19,6 +20,10 @@ const User = Schema({
 	},
 	balance: {
 		type: Number,
+	},
+	status: {
+		type: Boolean,
+		default: true,
 	},
 });
 
