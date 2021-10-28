@@ -20,5 +20,11 @@ const transactionExists = async (transactionID) => {
 		);
 	}
 };
+const usernameIsUnique = async (username) => {
+	const user = await User.findOne({ username });
+	if (user) {
+		throw new Error("El nombre de usuario ya existe");
+	}
+};
 
-module.exports = { userExists, transactionExists };
+module.exports = { userExists, transactionExists, usernameIsUnique };

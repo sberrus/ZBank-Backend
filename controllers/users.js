@@ -25,25 +25,25 @@ const getUsers = async (req = request, res = response) => {
 };
 
 const newUser = async (req = request, res = response) => {
-	const { userName, password } = req.body;
+	const { username, password } = req.body;
 
 	const userID = uuidv4().split("-")[2];
 	const balance = 2500;
 
-	const newUsuario = new User({
+	const user = new User({
 		userID,
-		userName,
+		username,
 		password,
 		balance,
 	});
 
 	try {
-		await newUsuario.save();
-		res.status(201).json({ newUsuario });
+		await user.save();
+		res.status(201).json({ user });
 	} catch (error) {
-		console.log(error.error);
+		console.log(error);
 		res.status(400).json({
-			errMsg: "error al guardar en la bbdd",
+			msg: "error al guardar en la bbdd",
 			error,
 		});
 	}
