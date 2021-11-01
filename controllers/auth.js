@@ -9,21 +9,10 @@ const login = async (req = request, res = response) => {
 	const { username, password } = req.body;
 
 	try {
-		//Vaidaciones
-		//existe correo
+		//get user
 		const usuario = await User.findOne({ username });
-		if (!usuario) {
-			return res
-				.status(400)
-				.json({ msg: "Error al iniciar sesión - username" });
-		}
-		//usuario activo
-		if (usuario.estado === false) {
-			return res
-				.status(400)
-				.json({ msg: "Error al iniciar sesión - status" });
-		}
-		//contraseña
+
+		//Comparar passwords
 		const validPassword = bcryptjs.compareSync(password, usuario.password);
 		if (!validPassword) {
 			return res

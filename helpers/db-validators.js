@@ -11,9 +11,12 @@ const userExists = async (userID) => {
 		throw new Error(`Error al encontrar al usuario - ID no existe en DDBB`);
 	}
 };
+/**
+ *
+ * @param {*} username check if username exists in DB and if its status is true
+ */
 const userIsActive = async (username) => {
 	const usuario = await User.findOne({ username });
-	console.log(usuario);
 	if (!usuario) {
 		throw new Error(`Error al encontrar al usuario - ID no existe en DDBB`);
 	}
