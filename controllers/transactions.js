@@ -55,7 +55,7 @@ const newTransaction = async (req = request, res = response) => {
 	}
 
 	const senderID = senderData.userID;
-	const senderNewBalance = senderData.balance - ammount;
+	const senderNewBalance = senderData.balance - parseInt(ammount);
 
 	await User.findOneAndUpdate(
 		{ userID: senderID },
@@ -64,7 +64,7 @@ const newTransaction = async (req = request, res = response) => {
 		}
 	);
 	const receiverID = receiverData.userID;
-	const receiverNewBalance = receiverData.balance + ammount;
+	const receiverNewBalance = receiverData.balance + parseInt(ammount);
 
 	await User.findOneAndUpdate(
 		{ userID: receiverID },
