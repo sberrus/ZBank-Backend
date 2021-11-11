@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const connectDDBB = async () => {
 	const dbURL = process.env.CNN_MONGOOSE;
-	console.log(dbURL);
 	try {
 		await mongoose.connect(dbURL, {
 			useNewUrlParser: true,

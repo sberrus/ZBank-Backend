@@ -16,7 +16,7 @@ const User = Schema({
 	},
 	role: {
 		type: String,
-		default: "USER",
+		default: "USER_ROLE",
 	},
 	balance: {
 		type: Number,

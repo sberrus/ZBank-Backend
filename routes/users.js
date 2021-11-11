@@ -1,13 +1,13 @@
 //imports
 const { Router } = require("express");
-const { body, query } = require("express-validator");
-//Schemas
-const User = require("../ddbb/schemas/User");
+const { body, query, header } = require("express-validator");
 //controllers
 const { getUsers, newUser } = require("../controllers/users");
 //helpers
+const { isAdminToken } = require("../helpers/jwt-validator");
+const { usernameIsUnique } = require("../helpers/db-validators");
+//middlewares
 const { errorHandler } = require("../middlewares/EVErrorHandler");
-const { userExists, usernameIsUnique } = require("../helpers/db-validators");
 const { passwordVerification } = require("../middlewares/validations");
 
 //router
@@ -16,7 +16,15 @@ const router = Router();
 //get User
 router.get(
 	"/",
-	[query("userID").optional().custom(userExists), errorHandler],
+	[
+		header("x-token")
+			.notEmpty()
+			.withMessage("Token obligatorio")
+			.bail()
+			.custom(isAdminToken),
+		query("userID").optional(),
+	],
+	errorHandler,
 	getUsers
 );
 

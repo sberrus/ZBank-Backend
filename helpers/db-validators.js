@@ -40,9 +40,23 @@ const usernameIsUnique = async (username) => {
 	}
 };
 
+/**
+ * Check if the user in the request is "ADMIN_ROLE" BY its token.
+ * @param {*} userID user´s uid
+ */
+const isAdmin = async (userID) => {
+	const user = await User.findOne({ userID });
+	if (!(user.role === "ADMIN_ROLE")) {
+		throw new Error(
+			"El no cuenta con los permisos necesarios para realizar esta acción"
+		);
+	}
+};
+
 module.exports = {
 	userExists,
 	transactionExists,
 	usernameIsUnique,
 	userIsActive,
+	isAdmin,
 };

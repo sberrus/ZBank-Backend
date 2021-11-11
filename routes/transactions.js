@@ -1,6 +1,6 @@
 //imports
 const { Router } = require("express");
-const { body, query } = require("express-validator");
+const { body, query, header } = require("express-validator");
 //controllers
 const {
 	getTransactions,
@@ -11,6 +11,7 @@ const { errorHandler } = require("../middlewares/EVErrorHandler");
 const { singleQuery } = require("../middlewares/checkers");
 //validators
 const { userExists, transactionExists } = require("../helpers/db-validators");
+const { verifyJWT } = require("../helpers/jwt-validator");
 
 //Rutas
 const router = Router();
@@ -19,6 +20,7 @@ router.get(
 	"/",
 	[
 		singleQuery,
+		header("x-token").bail().custom(verifyJWT),
 		query("accountID").optional().custom(userExists),
 		query("transactionID")
 			.optional()
@@ -26,14 +28,15 @@ router.get(
 			.withMessage("El id no es válido")
 			.bail()
 			.custom(transactionExists),
-		errorHandler,
 	],
+	errorHandler,
 	getTransactions
 );
 
 router.post(
 	"/",
 	[
+		header("x-token").custom(verifyJWT),
 		body("sender")
 			.notEmpty()
 			.withMessage("El ID sender es obligatorio")
@@ -62,5 +65,9 @@ router.post(
 	errorHandler,
 	newTransaction
 );
+
+// router.post("/prueba", [], errorHandler, (req, res) => {
+// 	res.send("hola");
+// });
 
 module.exports = router;
