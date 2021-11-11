@@ -77,8 +77,11 @@ const newTransaction = async (req = request, res = response) => {
 	//Registrar nueva transacción
 	const transaction = new Transaction({
 		transactionID: uuidv4().split("-")[4],
-		sender,
-		receiver,
+		sender: {
+			uid: senderID,
+			username: senderData.username,
+		},
+		receiver: { uid: receiverID, username: receiverData.username },
 		date: new Date().toISOString(),
 		ammount,
 	});

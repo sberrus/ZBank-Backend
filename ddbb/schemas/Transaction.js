@@ -6,12 +6,27 @@ const Transaction = Schema({
 		unique: true,
 	},
 	sender: {
-		type: String,
-		required: [true, "El ID de la cuenta emisora es obligatoria"],
+		uid: {
+			type: String,
+			required: [true, "El ID de la cuenta emisora es obligatoria"],
+		},
+		username: {
+			type: String,
+			required: [true, "El username de la cuenta emisora es obligatorio"],
+		},
 	},
 	receiver: {
-		type: String,
-		required: [true, "El ID de la cuenta receptora es obligatoria"],
+		uid: {
+			type: String,
+			required: [true, "El ID de la cuenta receptora es obligatorio"],
+		},
+		username: {
+			type: String,
+			required: [
+				true,
+				"El username de la cuenta receptora es obligatorio",
+			],
+		},
 	},
 	date: {
 		type: Date,
