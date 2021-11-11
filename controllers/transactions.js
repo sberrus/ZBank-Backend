@@ -19,18 +19,18 @@ const getTransactions = async (req = request, res = response) => {
 			return res.json(transaction);
 		}
 
-		transactions = await Transaction.find();
+		transactions = await Transaction.find().limit(6);
 		//Obtiene las transacciones de un usuario
 		if (accountID) {
 			const userTransactions = transactions.filter(
 				(transaction) =>
-					transaction.sender === accountID ||
-					transaction.receiver === accountID
+					transaction.sender.uid === accountID ||
+					transaction.receiver.uid === accountID
 			);
-			return res.json(userTransactions);
+			return res.json({ totalDocs, userTransactions });
 		}
 		//Obtiene todas las transacciones de todos los usuarios.
-		res.json({ totalDocs, transactions });
+		res.json({ totalDocs, userTransactions });
 	} catch (error) {
 		console.log(error);
 	}
