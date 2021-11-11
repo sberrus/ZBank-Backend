@@ -18,14 +18,9 @@ const getTransactions = async (req = request, res = response) => {
 			const transaction = await Transaction.findById(transactionID);
 			return res.json(transaction);
 		}
-<<<<<<< HEAD
 		//TODO: MEJORAR ESTO POR FAVOR xd
 		const _skip = parseInt(totalDocs) - 6;
 		transactions = await Transaction.find().skip(_skip);
-=======
-
-		transactions = await Transaction.find().limit(6);
->>>>>>> 843cd82c2cbc9e7221ce06eccf8245bc964d38c8
 		//Obtiene las transacciones de un usuario
 		if (accountID) {
 			const userTransactions = transactions.filter(
@@ -33,12 +28,8 @@ const getTransactions = async (req = request, res = response) => {
 					transaction.sender.uid === accountID ||
 					transaction.receiver.uid === accountID
 			);
-<<<<<<< HEAD
 			const reversedArr = userTransactions.reverse();
 			return res.json({ totalDocs, reversedArr });
-=======
-			return res.json({ totalDocs, userTransactions });
->>>>>>> 843cd82c2cbc9e7221ce06eccf8245bc964d38c8
 		}
 		//Obtiene todas las transacciones de todos los usuarios.
 		res.json({ totalDocs, userTransactions });
