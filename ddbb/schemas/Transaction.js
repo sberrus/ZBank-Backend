@@ -1,10 +1,6 @@
 const { Schema, model } = require("mongoose");
 
 const Transaction = Schema({
-	transactionID: {
-		type: String,
-		unique: true,
-	},
 	sender: {
 		uid: {
 			type: String,
