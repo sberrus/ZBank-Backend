@@ -4,7 +4,7 @@ const { body, query, header } = require("express-validator");
 //controllers
 const { getUsers, newUser } = require("../controllers/users");
 //helpers
-const { isAdminToken } = require("../helpers/jwt-validator");
+const { verifyJWT } = require("../helpers/jwt-validator");
 const { usernameIsUnique } = require("../helpers/db-validators");
 //middlewares
 const { errorHandler } = require("../middlewares/EVErrorHandler");
@@ -21,7 +21,7 @@ router.get(
 			.notEmpty()
 			.withMessage("Token obligatorio")
 			.bail()
-			.custom(isAdminToken),
+			.custom(verifyJWT),
 		query("userID").optional(),
 	],
 	errorHandler,

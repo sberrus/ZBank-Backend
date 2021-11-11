@@ -8,7 +8,7 @@ const User = require("../ddbb/schemas/User");
  * @param {*} token
  */
 const verifyJWT = async (token) => {
-	jwt.verify(token, process.env.TOKEN_PRIVATE_KEY, (err, decoded) => {
+	jwt.verify(token, process.env.TOKEN_PRIVATE_KEY, (err) => {
 		if (err) {
 			throw new Error("Token no válido");
 		}
