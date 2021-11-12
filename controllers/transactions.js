@@ -19,7 +19,13 @@ const getTransactions = async (req = request, res = response) => {
 			return res.json(transaction);
 		}
 		//TODO: MEJORAR ESTO POR FAVOR xd
-		const _skip = parseInt(totalDocs) - 6;
+		let _skip = 0;
+		if (parseInt(totalDocs) - 6 < 0) {
+			_skip = 0;
+		} else {
+			_skip = parseInt(totalDocs) - 6;
+		}
+
 		transactions = await Transaction.find().skip(_skip);
 		//Obtiene las transacciones de un usuario
 		if (accountID) {
