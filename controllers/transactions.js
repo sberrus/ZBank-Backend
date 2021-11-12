@@ -45,7 +45,7 @@ const getTransactions = async (req = request, res = response) => {
 };
 
 const newTransaction = async (req = request, res = response) => {
-	let { sender, receiver, ammount, concept } = req.body;
+	let { sender, receiver, ammount, concept = "" } = req.body;
 	let senderData, receiverData;
 
 	try {
