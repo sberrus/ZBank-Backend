@@ -61,6 +61,7 @@ router.post(
 			.withMessage("El monto debe ser un número")
 			.notEmpty()
 			.withMessage("El monto es obligatorio"),
+		body("concept").optional(),
 	],
 	errorHandler,
 	newTransaction

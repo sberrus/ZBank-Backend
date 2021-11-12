@@ -45,7 +45,7 @@ const getTransactions = async (req = request, res = response) => {
 };
 
 const newTransaction = async (req = request, res = response) => {
-	let { sender, receiver, ammount } = req.body;
+	let { sender, receiver, ammount, concept } = req.body;
 	let senderData, receiverData;
 
 	try {
@@ -92,6 +92,7 @@ const newTransaction = async (req = request, res = response) => {
 		receiver: { uid: receiverID, username: receiverData.username },
 		date: new Date().toISOString(),
 		ammount,
+		concept,
 	});
 	transaction.save();
 

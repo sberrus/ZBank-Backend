@@ -24,6 +24,9 @@ const Transaction = Schema({
 			],
 		},
 	},
+	concept: {
+		type: String,
+	},
 	date: {
 		type: Date,
 		required: [true, "La fecha es obligatoria"],
