@@ -6,6 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 //Schemas
 const User = require("../ddbb/schemas/User.js");
 const { query } = require("express-validator");
+const { generarJWT } = require("../helpers/jwt-generator.js");
 
 const getUsers = async (req = request, res = response) => {
 	const { userID } = req.query; //querys
@@ -47,8 +48,9 @@ const newUser = async (req = request, res = response) => {
 	user.password = bcryptjs.hashSync(password, salt);
 
 	try {
+		const token = await generarJWT(user.userID);
 		await user.save();
-		res.status(201).json({ user });
+		res.status(201).json({ user, token });
 	} catch (error) {
 		console.log(error);
 		res.status(400).json({
